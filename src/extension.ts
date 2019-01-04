@@ -132,6 +132,13 @@ class ArmVizPanel {
 
         ArmVizPanel.currentPanel._panel.webview.html = html;
 
+        // Listen for when the panel is disposed
+        ArmVizPanel.currentPanel._panel.onDidDispose(
+            () => {
+                ArmVizPanel.currentPanel = undefined;
+            },
+            null
+        );
         /*
         setInterval(() => {
             let win:any = ArmVizPanel.currentPanel._panel;
