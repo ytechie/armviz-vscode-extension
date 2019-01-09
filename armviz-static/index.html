@@ -1,28 +1,26 @@
 <html>
     <body>
-        <iframe id="armvizFrame" src="https://bing.com"></iframe>
+        This is ARMViz!
+        <iframe id="armvizFrame" src="https://windowmessages.azurewebsites.net/index.html"></iframe>
         <span id="armvizMessage" />
         
         <script>
-               // (function() {
-                    //const vscode = acquireVsCodeApi();
-                    //const messageElement = document.getElementById('armvizMessage');
-
-                    /*
-                        to send a message to vs code:
-                        vscode.postMessage({
-                                command: 'alert',
-                                text: '🐛  on line ' + count
-                            })
-                    */
+                (function() {
+                    const webFrame = document.getElementById('armvizFrame');
+                    const messageElement = document.getElementById('armvizMessage');
 
                     // Handle the message from VS Code
-                    //window.addEventListener('message', event => {
-                    //    messageElement.innerText = event.data;
+                    window.addEventListener('message', event => {
+                        messageElement.innerText = JSON.stringify(event.data);
+                        console.log('Received new ARM template');
+
+                        var clone = JSON.parse(JSON.stringify(event.data));
+
+                        webFrame.contentWindow.postMessage(event.data, '*');
 
                             //Pass on the message to our nested iframe
-                    //});
-              //  });
+                    });
+                })();
             </script>
     </body>
 </html>

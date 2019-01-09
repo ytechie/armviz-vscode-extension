@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "vs-armviz" is now active!');
     
     context.subscriptions.push(vscode.commands.registerCommand('extension.ArmViz', () => {
-        ArmVizPanel.createOrShow(context.extensionPath);
+        ArmVizPanel.createOrShow(context);
     }));
 
     if (vscode.window.registerWebviewPanelSerializer) {
@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.registerWebviewPanelSerializer(ArmVizPanel.viewType, {
             async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any) {
                 console.log(`Got state: ${state}`);
-                ArmVizPanel.revive(webviewPanel, context.extensionPath);
+                ArmVizPanel.revive(webviewPanel, context);
             }
         });
     }
@@ -37,13 +37,16 @@ class ArmVizPanel {
     private readonly _panel: vscode.WebviewPanel;
     private _disposables: vscode.Disposable[] = [];
     private readonly _extensionPath: string;
+    private readonly _context: vscode.ExtensionContext;
 
     private constructor(
         panel: vscode.WebviewPanel,
-        extensionPath: string
+        context: vscode.ExtensionContext
     ) {
         this._panel = panel;
-        this._extensionPath = extensionPath;
+
+        this._context = context;
+        this._extensionPath = context.extensionPath;
 
         // Set the webview's initial html content 
         this._update();
@@ -68,10 +71,28 @@ class ArmVizPanel {
             }
         }, null, this._disposables);
         */
+
+        //Capture the active text window
+        /*var editor = vscode.window.activeTextEditor;
+        if(!editor) {
+            return;
+        }
+        */
+
+
+        //this is temporary to test message sending
+        setInterval(() => {
+            //var foo = vscode.window.activeTextEditor;
+
+            console.log('Sending arm template to html');
+            this._sendTemplateToWebView((new Date()).toISOString());
+        }, 1000);
     }
 
-    public static createOrShow(extensionPath: string) {
+    //factory
+    public static createOrShow(context: vscode.ExtensionContext) {
         const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
+        const extensionPath = context.extensionPath;
 
         // If we already have a panel, show it.
         if (ArmVizPanel.currentPanel) {
@@ -90,20 +111,11 @@ class ArmVizPanel {
             ]
         });
       
-        ArmVizPanel.currentPanel = new ArmVizPanel(panel, extensionPath);
-
-        /*
-        setInterval(() => {
-            let win:any = ArmVizPanel.currentPanel._panel;
-            win.window.onDidReceiveMessage(message => {
-                console.log(message)
-            });
-        }, 1000);
-        */
+        ArmVizPanel.currentPanel = new ArmVizPanel(panel, context);
     }
 
-    public static revive(panel: vscode.WebviewPanel, extensionPath: string) {
-        ArmVizPanel.currentPanel = new ArmVizPanel(panel, extensionPath);
+    public static revive(panel: vscode.WebviewPanel, context: vscode.ExtensionContext) {
+        ArmVizPanel.currentPanel = new ArmVizPanel(panel, context);
     }
 
     public dispose() {
@@ -132,5 +144,9 @@ class ArmVizPanel {
         let buf = fs.readFileSync(path.join(this._extensionPath, 'armviz-static/', 'index.html'));
         let html = buf.toString();
         this._panel.webview.html = html;
+    }
+
+    private _sendTemplateToWebView(template:string) {
+        this._panel.webview.postMessage({ template: template });
     }
 }
