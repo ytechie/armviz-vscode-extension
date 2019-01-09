@@ -10,7 +10,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.ArmViz"
+		"onCommand:extension.ArmViz",
+		"onWebviewPanel:armVizPanel"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
