@@ -1,16 +1,9 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "vs-armviz" is now active!');
+	console.log('ARMViz Extension Activated');
     
     context.subscriptions.push(vscode.commands.registerCommand('extension.ArmViz', () => {
         ArmVizPanel.createOrShow(context);
@@ -27,7 +20,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {}
 
 class ArmVizPanel {
@@ -49,14 +41,14 @@ class ArmVizPanel {
         this._extensionPath = context.extensionPath;
 
         // Set the webview's initial html content 
-        this._update();
+        this.writeHtml();
 
         this._context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(e => {
-            this._getText();
+            this._sendTemplateToWebView();
         }));
 
         this._context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(e => {
-            this._getText();
+            this._sendTemplateToWebView();
         }));
 
         // Listen for when the panel is disposed
@@ -66,34 +58,9 @@ class ArmVizPanel {
         // Update the content based on view changes
         this._panel.onDidChangeViewState(e => {
             if (this._panel.visible) {
-                this._update()
+                this.writeHtml();  //is this needed?
             }
         }, null, this._disposables);
-
-        // Handle messages from the webview
-        /*this._panel.webview.onDidReceiveMessage(message => {
-            switch (message.command) {
-                case 'alert':
-                    vscode.window.showErrorMessage(message.text);
-                    return;
-            }
-        }, null, this._disposables);
-        */
-
-        //Capture the active text window
-        /*var editor = vscode.window.activeTextEditor;
-        if(!editor) {
-            return;
-        }
-        */
-
-        //this is temporary to test message sending
-        // setInterval(() => {
-        //     //var foo = vscode.window.activeTextEditor;
-
-        //     console.log('Sending arm template to html');
-        //     this._sendTemplateToWebView((new Date()).toISOString());
-        // }, 1000);
     }
 
     //factory
@@ -139,28 +106,15 @@ class ArmVizPanel {
         }
     }
 
-    private _update() {
-        // let editor = vscode.window.activeTextEditor;
-        // if (!editor) {
-        //     return;
-        // }
-
-        // let doc = editor.document;
-        // let text = doc.getText()
-
+    private writeHtml() {
         let buf = fs.readFileSync(path.join(this._extensionPath, 'armviz-static/', 'index.html'));
         let html = buf.toString();
         this._panel.webview.html = html;
     }
 
-    private _sendTemplateToWebView(template:string) {
-        console.log(`Sending message from extension to webview: ${template}`);
-        this._panel.webview.postMessage({ template: template });
-    }
-
-    private _getText(): void {
+    private _sendTemplateToWebView() {
         let text = vscode.window.activeTextEditor.document.getText();
-        console.log(`Detected change in document`);
-        this._sendTemplateToWebView(text);
+        console.log(`Template updated, sending. Length: ${text.length}`);
+        this._panel.webview.postMessage({ template: text });
     }
 }
