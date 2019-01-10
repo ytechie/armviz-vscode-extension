@@ -51,6 +51,14 @@ class ArmVizPanel {
         // Set the webview's initial html content 
         this._update();
 
+        this._context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(e => {
+            this._getText();
+        }));
+
+        this._context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(e => {
+            this._getText();
+        }));
+
         // Listen for when the panel is disposed
         // This happens when the user closes the panel or when the panel is closed programatically
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
@@ -79,14 +87,13 @@ class ArmVizPanel {
         }
         */
 
-
         //this is temporary to test message sending
-        setInterval(() => {
-            //var foo = vscode.window.activeTextEditor;
+        // setInterval(() => {
+        //     //var foo = vscode.window.activeTextEditor;
 
-            console.log('Sending arm template to html');
-            this._sendTemplateToWebView((new Date()).toISOString());
-        }, 1000);
+        //     console.log('Sending arm template to html');
+        //     this._sendTemplateToWebView((new Date()).toISOString());
+        // }, 1000);
     }
 
     //factory
@@ -147,6 +154,13 @@ class ArmVizPanel {
     }
 
     private _sendTemplateToWebView(template:string) {
+        console.log(`Sending message from extension to webview: ${template}`);
         this._panel.webview.postMessage({ template: template });
+    }
+
+    private _getText(): void {
+        let text = vscode.window.activeTextEditor.document.getText();
+        console.log(`Detected change in document`);
+        this._sendTemplateToWebView(text);
     }
 }
