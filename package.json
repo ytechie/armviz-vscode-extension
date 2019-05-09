@@ -3,6 +3,7 @@
 	"displayName": "ARM Template Visualizer",
 	"description": "A graphical visualizer for resources in ARM templates.",
 	"version": "0.0.5",
+	"icon": "https://github.com/ytechie/armviz-vscode-extension/blob/master/readme-assets/icon.jpg?raw=true",
 	"publisher": "ytechie",
 	"repository": "https://github.com/ytechie/armviz-vscode-extension",
 	"engines": {
