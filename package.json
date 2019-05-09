@@ -6,6 +6,7 @@
 	"icon": "readme-assets/armviz.jpg",
 	"publisher": "ytechie",
 	"repository": "https://github.com/ytechie/armviz-vscode-extension",
+	"keywords": ["arm", "template", "visualizer", "armviz", "azure"],
 	"engines": {
 		"vscode": "^1.30.0"
 	},
