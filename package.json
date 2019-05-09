@@ -1,8 +1,10 @@
 {
-	"name": "vs-hello-world",
-	"displayName": "vs-hello-world",
-	"description": "",
+	"name": "armviz",
+	"displayName": "ARM Template Visualizer",
+	"description": "A graphical visualizer for resources in ARM templates.",
 	"version": "0.0.1",
+	"publisher" : "ytechie",
+	"repository": "https://github.com/ytechie/armviz-vscode-extension",
 	"engines": {
 		"vscode": "^1.30.0"
 	},
