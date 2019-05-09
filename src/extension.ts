@@ -31,6 +31,8 @@ class ArmVizPanel {
     private readonly _extensionPath: string;
     private readonly _context: vscode.ExtensionContext;
 
+    private _disposed: boolean = false;
+
     private constructor(
         panel: vscode.WebviewPanel,
         context: vscode.ExtensionContext
@@ -93,6 +95,12 @@ class ArmVizPanel {
     }
 
     public dispose() {
+        if (this._disposed) {
+			return;
+        }
+
+        this._disposed = true;
+        
         ArmVizPanel.currentPanel = undefined;
 
         // Clean up our resources
@@ -114,7 +122,11 @@ class ArmVizPanel {
 
     private _sendTemplateToWebView() {
         let text = vscode.window.activeTextEditor.document.getText();
-        console.log(`Template updated, sending. Length: ${text.length}`);
-        this._panel.webview.postMessage({ template: text });
+
+        if (!this._disposed) {
+            console.log(`Template updated, sending. Length: ${text.length}`);
+            this._panel.webview.postMessage({ template: text });
+            console.log('Message Posted');
+        }
     }
 }
