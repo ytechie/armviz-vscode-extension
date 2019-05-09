@@ -1,5 +1,18 @@
-Visualize your Azure ARM template dependenicies as a tree. Think of it as Vizio for Azure!
+Visualize your Azure ARM template dependencies as a tree. Think of it as Vizio for Azure!
 
+![ARMViz in Action](readme-assets/armviz.jpg)
+
+## Usage
+
+1. Open the command palatte using `⇧⌘P` on a mac, or `Ctrl+Shift+P` on Windows.
+1. Start to type "Arm Template Visualizer" and click on it.
+![Command Palette](readme-assets/command-palette.jpg)
+1. You should now see the preview side-by-side with your template code.
+
+## Contributors
+
+* Jason Young
+* Shenglong Li
 
 ## Nerdy Stuff
 
