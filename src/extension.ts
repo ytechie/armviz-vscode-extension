@@ -77,7 +77,7 @@ class ArmVizPanel {
         }
 
         // Otherwise, create a new panel.
-        const panel = vscode.window.createWebviewPanel(ArmVizPanel.viewType, "ARM Visualizer", column || vscode.ViewColumn.One, {
+        const panel = vscode.window.createWebviewPanel(ArmVizPanel.viewType, "ARM Visualizer", vscode.ViewColumn.Beside, {
             // Enable javascript in the webview
             enableScripts: true,
 
@@ -88,6 +88,10 @@ class ArmVizPanel {
         });
       
         ArmVizPanel.currentPanel = new ArmVizPanel(panel, context);
+
+        setInterval(function() {
+            ArmVizPanel.currentPanel._sendTemplateToWebView();
+        },2000);
     }
 
     public static revive(panel: vscode.WebviewPanel, context: vscode.ExtensionContext) {
@@ -118,10 +122,23 @@ class ArmVizPanel {
         let buf = fs.readFileSync(path.join(this._extensionPath, 'armviz-static/', 'index.html'));
         let html = buf.toString();
         this._panel.webview.html = html;
+
+        
     }
 
-    private _sendTemplateToWebView() {
-        let text = vscode.window.activeTextEditor.document.getText();
+    public _sendTemplateToWebView() {
+        let editor = vscode.window.activeTextEditor ||
+            vscode.window.visibleTextEditors[vscode.window.visibleTextEditors.length-1];
+
+        let text = editor.document.getText();
+
+        try {
+            //JSON.parse(text);
+        } catch(ex) {
+            console.log('Not JSON');
+            return;
+        }
+        
 
         if (!this._disposed) {
             console.log(`Template updated, sending. Length: ${text.length}`);
