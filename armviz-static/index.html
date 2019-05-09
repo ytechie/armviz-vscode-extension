@@ -1,14 +1,21 @@
 <html>
     <body>
-        <iframe id="armvizFrame" src="https://windowmessages.azurewebsites.net/index.html"
+        <!-- UPDATE THIS FOR PROD http://localhost:32775/?vsembed=true-->
+        <!--  -->
+        <iframe id="armvizFrame" src="http://armvizcontainer.azurewebsites.net/?vsembed=true"
             style="position:fixed; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;"></iframe>
         
         <script>
                 (function() {
+                    console.log('Loaded Host Page');
                     const webFrame = document.getElementById('armvizFrame');
 
                     // Handle the message from VS Code
+                    // Note: Messages are only received when the panel is visible
                     window.addEventListener('message', event => {
+                        console.log('Host page received event');
+                        console.log(event);
+
                         console.log('Received new ARM template, length is ' + event.data.length);
 
                         webFrame.contentWindow.postMessage(event.data, '*');
