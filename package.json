@@ -9,9 +9,7 @@
 	"engines": {
 		"vscode": "^1.30.0"
 	},
-	"categories": [
-		"Other"
-	],
+	"categories": ["Programming Languages", "Linters", "Formatters", "Other", "Azure"],
 	"activationEvents": [
 		"onCommand:extension.ArmViz",
 		"onWebviewPanel:armVizPanel"
